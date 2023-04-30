@@ -6,8 +6,8 @@ import { useRef } from 'react'
 import { Group, Mesh } from 'three'
 import {
   OrbitControls,
-  TransformControls,
-  PivotControls,
+  // TransformControls,
+  // PivotControls,
   Html,
   Text,
   Float,
@@ -77,25 +77,23 @@ export function Experience() {
       <ambientLight intensity={0.5} />
 
       <group ref={groupRef}>
-        <PivotControls anchor={[0, 0, 0]} depthTest={false} lineWidth={4}>
-          <mesh
-            ref={sphere}
-            position={[position.x, position.y, 0]}
-            visible={visible}
+        <mesh
+          ref={sphere}
+          position={[position.x, position.y, 0]}
+          visible={visible}
+        >
+          <sphereGeometry />
+          <meshStandardMaterial color={color} />
+          <Html
+            distanceFactor={8}
+            occlude={[sphere, cube]}
+            center
+            position={[1, 1, 0]}
+            className="absolute bg-black/50 text-white p-4 whitespace-nowrap overflow-hidden rounded-[30px] select-none"
           >
-            <sphereGeometry />
-            <meshStandardMaterial color={color} />
-            <Html
-              distanceFactor={8}
-              occlude={[sphere, cube]}
-              center
-              position={[1, 1, 0]}
-              className="absolute bg-black/50 text-white p-4 whitespace-nowrap overflow-hidden rounded-[30px] select-none"
-            >
-              That´s a sphere
-            </Html>
-          </mesh>
-        </PivotControls>
+            That´s a sphere
+          </Html>
+        </mesh>
 
         <Float speed={5} floatIntensity={2}>
           <mesh
@@ -107,7 +105,7 @@ export function Experience() {
             <boxGeometry />
             <meshStandardMaterial color="#307244" />
           </mesh>
-          <TransformControls object={cube} mode="translate" />
+          {/* <TransformControls object={cube} mode="translate" /> */}
         </Float>
       </group>
       <mesh scale={10} position={[0.5, -1.5, -1.5]} rotation-x={-Math.PI * 0.5}>
