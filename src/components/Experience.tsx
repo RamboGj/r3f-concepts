@@ -5,13 +5,12 @@
 import { useRef } from 'react'
 import { Group, Mesh } from 'three'
 import {
+  ContactShadows,
+  ContactShadowsProps,
+  Environment,
+  Lightformer,
   OrbitControls,
-  // TransformControls,
-  // PivotControls,
-  Html,
-  Text,
-  Float,
-  MeshReflectorMaterial,
+  Sky,
 } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useControls, button } from 'leva'
@@ -47,24 +46,58 @@ export function Experience() {
     },
   })
 
+  const { shadowBlur, shadowColor, shadowOpacity } = useControls('Shadow', {
+    shadowColor: '#4b2709',
+    shadowBlur: {
+      value: 2.8,
+      min: 0,
+      max: 10,
+      step: 0.1,
+    },
+    shadowOpacity: {
+      value: 0.4,
+      max: 1,
+      min: 0,
+      step: 0.1,
+    },
+  })
+
+  const { envMapIntensity, envMapHeight, envMapRadius, envMapScale } =
+    useControls('env', {
+      envMapIntensity: {
+        value: 3.5,
+        min: 0,
+        max: 12,
+      },
+      envMapHeight: {
+        value: 7,
+        min: 0,
+        max: 100,
+      },
+      envMapRadius: {
+        value: 20,
+        min: 10,
+        max: 1000,
+      },
+      envMapScale: {
+        value: 100,
+        min: 10,
+        max: 1000,
+      },
+    })
+
+  // const { sunPosition } = useControls('sun', {
+  //   sunPosition: {
+  //     value: [1, 2, 3],
+  //   },
+  // })
+
   const cube = useRef<Mesh>(null!)
   const sphere = useRef<Mesh>(null!)
   const groupRef = useRef<Group>(null!)
 
-  // Everything you place inside useFrame will animate and happen on each app frame linearly
-  // useFrame((state, delta) => {
-  // const angle = state.clock.elapsedTime
-  // state.camera.position.x = Math.sin(angle) * 8
-  // state.camera.position.z = Math.cos(angle) * 8
-  // state.camera.lookAt(0, 0, 0)
-
-  // cube.current.rotation.y += delta
-  // groupRef.current.rotation.y += delta
-  // })
-
   useFrame((state, delta) => {
-    cube.current.rotation.x += delta
-    cube.current.rotation.z += delta
+    // cube.current.rotation.y += delta * 0.2
   })
 
   return (
@@ -72,58 +105,114 @@ export function Experience() {
       {perfVisible ? <Perf position="top-left" /> : null}
 
       <OrbitControls makeDefault />
+      {/* <SoftShadows samples={17} size={10} /> */}
 
-      <directionalLight position={[1, 2, 3]} intensity={1.5} />
-      <ambientLight intensity={0.5} />
+      {/* <AccumulativeShadows
+        color="#316d39"
+        opacity={0.8}
+        position={[0, -0.99, 0]}
+        frames={Infinity}
+        temporal
+        blend={100}
+      >
+        <RandomizedLight
+          position={[1, 2, 3]}
+          amount={8}
+          radius={1}
+          ambient={0.5}
+          intensity={1}
+          bias={0.001}
+        />
+      </AccumulativeShadows> */}
+      {/* 
+      <ContactShadows
+        blur={shadowBlur}
+        opacity={shadowOpacity}
+        color={shadowColor}
+        position={[0, 0, 0]}
+        scale={10}
+        resolution={512}
+        far={5}
+        frames={1}
+      /> */}
 
-      <group ref={groupRef}>
+      {/* <directionalLight
+        position={sunPosition}
+        castShadow
+        intensity={1.5}
+        shadow-mapSize={[1024, 1024]}
+        shadow-camera-near={1}
+        shadow-camera-far={10}
+        shadow-camera-top={5}
+        shadow-camera-right={5}
+        shadow-camera-bottom={-5}
+        shadow-camera-left={-5}
+      /> */}
+      {/* <ambientLight intensity={0.5} /> */}
+
+      {/* <Sky sunPosition={sunPosition} /> */}
+      {/* <Environment
+        background
+        ground={{
+          height: envMapHeight,
+          radius: envMapRadius,
+          scale: envMapScale,
+        }}
+        preset="sunset"
+        resolution={32}
+        files={'./environmentMaps/the_sky_is_on_fire_2k.hdr'}
+      > */}
+      {/* <color args={['#000000']} attach="background" />
+        <Lightformer
+          position-z={-5}
+          scale={10}
+          color="red"
+          intensity={2}
+          form="ring"
+        /> */}
+      {/* <mesh position-z={-5} scale={10}>
+          <planeGeometry />
+          <meshBasicMaterial color={[10, 0, 0]} />
+        </mesh> */}
+      {/* </Environment> */}
+
+      {/* <group ref={groupRef}>
         <mesh
+          castShadow
+          position-y={1}
           ref={sphere}
           position={[position.x, position.y, 0]}
           visible={visible}
         >
           <sphereGeometry />
-          <meshStandardMaterial color={color} />
-          <Html
-            distanceFactor={8}
-            occlude={[sphere, cube]}
-            center
-            position={[1, 1, 0]}
-            className="absolute bg-black/50 text-white p-4 whitespace-nowrap overflow-hidden rounded-[30px] select-none"
-          >
-            That´s a sphere
-          </Html>
+          <meshStandardMaterial
+            color={color}
+            envMapIntensity={envMapIntensity}
+          />
         </mesh>
 
-        <Float speed={5} floatIntensity={2}>
-          <mesh
-            ref={cube}
-            position-x={2}
-            scale={scale}
-            rotation-y={Math.PI * 0.25}
-          >
-            <boxGeometry />
-            <meshStandardMaterial color="#307244" />
-          </mesh>
-          {/* <TransformControls object={cube} mode="translate" /> */}
-        </Float>
-      </group>
-      <mesh scale={10} position={[0.5, -1.5, -1.5]} rotation-x={-Math.PI * 0.5}>
+        <mesh
+          castShadow
+          ref={cube}
+          position-x={2}
+          position-y={1}
+          scale={scale}
+          rotation-y={Math.PI * 0.25}
+        >
+          <boxGeometry />
+          <meshStandardMaterial
+            envMapIntensity={envMapIntensity}
+            color="mediumpurple"
+          />
+        </mesh>
+      </group> */}
+      {/* <mesh scale={10} position-y={0} rotation-x={-Math.PI * 0.5}>
         <planeGeometry />
-        {/* <meshStandardMaterial color="greenyellow" /> */}
-        <MeshReflectorMaterial
-          mirror={0.75}
-          color="#1A2122"
-          resolution={512}
-          blur={[1000, 1000]}
-          mixBlur={1}
+        <meshStandardMaterial
+          color="greenyellow"
+          envMapIntensity={envMapIntensity}
         />
-      </mesh>
-
-      <Text position-y={2} position-z={-5} maxWidth={2} textAlign="center">
-        I LOVE R3F
-        <meshNormalMaterial />
-      </Text>
+      </mesh> */}
     </>
   )
 }
