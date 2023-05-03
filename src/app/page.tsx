@@ -10,6 +10,7 @@ export default function Home() {
     <>
       <Leva collapsed />
       <Canvas
+        shadows
         dpr={[1, 2]} // default value from R3F
         gl={{ toneMapping: THREE.ACESFilmicToneMapping }} // default value from R3F
         camera={{
