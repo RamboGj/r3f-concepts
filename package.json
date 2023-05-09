@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-three/drei": "^9.66.1",
     "@react-three/fiber": "^8.13.0",
+    "@react-three/postprocessing": "^2.10.0",
     "@rocketseat/eslint-config": "^1.2.0",
     "@types/node": "18.16.1",
     "@types/react": "18.2.0",
